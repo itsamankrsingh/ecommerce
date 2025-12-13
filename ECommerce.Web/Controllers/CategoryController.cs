@@ -22,5 +22,23 @@ namespace ECommerce.Web.Controllers
             
             return View();
         }
+
+        [HttpPost]
+        public IActionResult Create(Category obj)
+        {
+            if (ModelState.IsValid)
+            {
+                if(obj.Name==obj.DisplayOrder.ToString())
+                {
+                    ModelState.AddModelError("name","The DisplayOrder cannot exactly match the Name.");
+                    return View(obj);
+                }
+                mAppDb.Categories.Add(obj);
+                mAppDb.SaveChanges();
+
+                return RedirectToAction("Index", "Category");
+            }
+            return View(obj);
+        }
     }
 }
