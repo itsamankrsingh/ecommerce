@@ -16,5 +16,11 @@ namespace ECommerce.Web.Controllers
             List<Category> categories = mAppDb.Categories.ToList();
             return View(categories);
         }
+
+        public IActionResult Create()
+        {
+            
+            return View();
+        }
     }
 }
