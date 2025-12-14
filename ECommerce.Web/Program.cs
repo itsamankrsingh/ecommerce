@@ -1,10 +1,13 @@
 using ECommerce.DataAccess.Data;
+using ECommerce.DataAccess.Interface;
+using ECommerce.DataAccess.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Connection string for PostgreSQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
@@ -33,6 +36,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Category}/{action=Index}/{id?}");
+    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

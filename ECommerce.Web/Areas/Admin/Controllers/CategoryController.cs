@@ -1,25 +1,29 @@
 ﻿using ECommerce.DataAccess.Data;
+using ECommerce.DataAccess.Interface;
 using ECommerce.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ECommerce.Web.Controllers
+namespace ECommerce.Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext mAppDb;
-        public CategoryController(ApplicationDbContext _appDb)
+        //private readonly ApplicationDbContext mAppDb;
+        //private readonly ICategoryRepository mCatRepo;
+        private readonly IUnitOfWork mUnitOfWork;
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            mAppDb = _appDb;
+            mUnitOfWork = unitOfWork;
         }
         public IActionResult Index()
         {
-            List<Category> categories = mAppDb.Categories.ToList();
+            //List<Category> categories = mAppDb.Categories.ToList();
+            List<Category> categories = mUnitOfWork.Category.GetAll().ToList();
             return View(categories);
         }
 
         public IActionResult Create()
         {
-
             return View();
         }
 
@@ -33,8 +37,10 @@ namespace ECommerce.Web.Controllers
                     ModelState.AddModelError("name", "The DisplayOrder cannot exactly match the Name.");
                     return View(obj);
                 }
-                mAppDb.Categories.Add(obj);
-                mAppDb.SaveChanges();
+                //mAppDb.Categories.Add(obj);
+                //mAppDb.SaveChanges();
+                mUnitOfWork.Category.Add(obj);
+                mUnitOfWork.Save();
                 TempData["success"] = "Category created successfully";  
                 return RedirectToAction("Index", "Category");
             }
@@ -48,7 +54,8 @@ namespace ECommerce.Web.Controllers
                 return NotFound();
             }
 
-            Category? category = mAppDb.Categories.Find(id);
+            //Category? category = mAppDb.Categories.Find(id);
+            Category? category = mUnitOfWork.Category.Get(c => c.Id == id);
 
             if (category == null)
             {
@@ -62,8 +69,10 @@ namespace ECommerce.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                mAppDb.Categories.Update(obj);
-                mAppDb.SaveChanges();
+                //mAppDb.Categories.Update(obj);
+                //mAppDb.SaveChanges();
+                mUnitOfWork.Category.Update(obj);
+                mUnitOfWork.Save();
                 TempData["success"] = "Category updated successfully";
                 return RedirectToAction("Index", "Category");
             }
@@ -77,8 +86,8 @@ namespace ECommerce.Web.Controllers
                 return NotFound();
             }
 
-            Category? category = mAppDb.Categories.Find(id);
-
+            //Category? category = mAppDb.Categories.Find(id);
+            Category? category = mUnitOfWork.Category.Get(c => c.Id == id);
             if (category == null)
             {
                 return NotFound();
@@ -94,15 +103,18 @@ namespace ECommerce.Web.Controllers
                 return NotFound();
             }
 
-            var category = mAppDb.Categories.Find(id);
+            //var category = mAppDb.Categories.Find(id);
+            Category? category = mUnitOfWork.Category.Get(c => c.Id == id);
 
             if (category == null)
             {
                 return NotFound();
             }
 
-            mAppDb.Categories.Remove(category);
-            mAppDb.SaveChanges();
+            //mAppDb.Categories.Remove(category);
+            //mAppDb.SaveChanges();
+            mUnitOfWork.Category.Remove(category);
+            mUnitOfWork.Save();
             TempData["success"] = "Category deleted successfully";
             return RedirectToAction("Index", "Category");
 
