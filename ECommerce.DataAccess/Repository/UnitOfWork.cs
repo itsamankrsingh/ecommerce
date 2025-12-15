@@ -6,16 +6,13 @@ namespace ECommerce.DataAccess.Repository
     public class UnitOfWork : IUnitOfWork
     {
         private ApplicationDbContext mAppDb;
-        public ICategoryRepository Category 
-        { 
-            get;
-            
-            private set; 
-        }
+        public ICategoryRepository Category { get; private set; }
+        public IProductRepository Product { get; private set; }
         public UnitOfWork(ApplicationDbContext appDb)
         {
             mAppDb = appDb;
             Category = new CategoryRepository(mAppDb);
+            Product = new ProductRepository(mAppDb);
         }
 
         public void Save()
