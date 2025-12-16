@@ -30,3 +30,7 @@ ALTER TABLE IF EXISTS master.Tb_Categories
 
 ALTER TABLE IF EXISTS master.Tb_Products
     OWNER to postgres;
+
+ALTER TABLE master.tb_products ADD COLUMN category_id integer;
+ALTER TABLE master.tb_products ADD CONSTRAINT fk_products_categories FOREIGN KEY (category_id) REFERENCES master.tb_categories(id) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE master.tb_products ADD COLUMN image_url text;

@@ -1,6 +1,7 @@
 ﻿using ECommerce.DataAccess.Interface;
 using ECommerce.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ECommerce.Web.Areas.Admin.Controllers
 {
@@ -19,6 +20,12 @@ namespace ECommerce.Web.Areas.Admin.Controllers
         }
         public IActionResult Create()
         {
+            IEnumerable<SelectListItem> categoryList = mUnitOfWork.Category.GetAll().Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.Id.ToString()
+            });
+            ViewBag.CategoryList = categoryList;
             return View();
         }
 

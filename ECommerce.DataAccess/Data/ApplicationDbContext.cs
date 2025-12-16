@@ -92,6 +92,21 @@ namespace ECommerce.DataAccess.Data
                 entity.HasIndex(e => e.ISBN)
                       .IsUnique()
                       .HasDatabaseName("uq_books_isbn");
+
+                //Foregin key
+                entity.Property(e => e.CategoryId)
+              .HasColumnName("category_id")
+              .IsRequired();
+
+                // FOREIGN KEY MAPPING
+                entity.HasOne(p => p.Category)
+                      .WithMany(c => c.Products)
+                      .HasForeignKey(p => p.CategoryId)
+                      .HasConstraintName("fk_products_categories")
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.ImageUrl)
+                     .HasColumnName("image_url");
             });
             #endregion
         }
