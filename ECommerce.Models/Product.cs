@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace ECommerce.Models
 {
-    public class Product
+    public partial class Product
     {
         [Key]
         public int Id { get; set; }
@@ -29,9 +30,11 @@ namespace ECommerce.Models
         [Display(Name = "Price for 100+")]
         [Range(1, 10000, ErrorMessage = "The List Price must be between 1-10000.")]
         public double Price100 { get; set; }
+        [Display(Name = "Category Id")]
         public int CategoryId { get; set; }   // FK column
-                                             
+        [ValidateNever]
         public Category Category { get; set; } // Navigation property
+        [Display(Name = "Image Url")]
         public string? ImageUrl { get; set; }
     }
 }
