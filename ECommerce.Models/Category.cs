@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ECommerce.Models
 {
@@ -14,6 +15,7 @@ namespace ECommerce.Models
         [Range(1, 100, ErrorMessage = "The field Display Order must be between 1-100.")]
         public int DisplayOrder { get; set; }
         // Navigation property
+        [JsonIgnore]
         public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

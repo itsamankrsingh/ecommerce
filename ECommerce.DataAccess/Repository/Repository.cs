@@ -20,14 +20,31 @@ namespace ECommerce.DataAccess.Repository
             mAppDb.Add(entity);
         }
 
-        public T Get(Expression<Func<T, bool>> filter)
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
         {
-            return mDbSet.AsNoTracking().FirstOrDefault(filter);
+            IQueryable<T> query = mDbSet;
+            query = query.Where(filter);
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var prop in includeProperties.Split([','], StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(prop);
+                }
+            }
+            return query.FirstOrDefault();
         }
 
-        public IEnumerable<T> GetAll()
+        public IEnumerable<T> GetAll(string? includeProperties = null)
         {
-            return mDbSet.AsNoTracking().ToList();
+            IQueryable<T> query = mDbSet;
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach(var prop in includeProperties.Split([','], StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(prop);
+                }
+            }
+            return query.ToList();
         }
 
         public void Remove(T entity)
