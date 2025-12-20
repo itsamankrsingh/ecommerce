@@ -13,7 +13,7 @@ namespace ECommerce.Web.Areas.Admin.Controllers
         private readonly IWebHostEnvironment mHostEnvironment;
         public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
-                mUnitOfWork = unitOfWork;
+            mUnitOfWork = unitOfWork;
             mHostEnvironment = webHostEnvironment;
         }
         public IActionResult Index()
@@ -32,8 +32,8 @@ namespace ECommerce.Web.Areas.Admin.Controllers
                     Value = i.Id.ToString()
                 })
             };
-           
-            if(id==null|| id==0)
+
+            if (id == null || id == 0)
             {
                 //Create
                 return View(productViewModel);
@@ -47,9 +47,9 @@ namespace ECommerce.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Upsert(ProductViewModel productVM,IFormFile? file)
+        public IActionResult Upsert(ProductViewModel productVM, IFormFile? file)
         {
-            
+
             if (ModelState.IsValid)
             {
                 if (file != null)
@@ -62,19 +62,19 @@ namespace ECommerce.Web.Areas.Admin.Controllers
                     {
                         //delete the old image
                         var oldImagePath = Path.Combine(wwwRootPath, productVM.Product.ImageUrl.TrimStart('\\'));
-                        if(System.IO.File.Exists(oldImagePath))
+                        if (System.IO.File.Exists(oldImagePath))
                         {
                             System.IO.File.Delete(oldImagePath);
                         }
                     }
 
-                    using(var fileStream = new FileStream(Path.Combine(productPath,fileName), FileMode.Create))
+                    using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
                     {
                         file.CopyTo(fileStream);
                     }
                     productVM.Product.ImageUrl = @"\images\products\" + fileName;
                 }
-                if(productVM.Product.Id==0)
+                if (productVM.Product.Id == 0)
                 {
                     mUnitOfWork.Product.Add(productVM.Product);
                     TempData["success"] = "Product created successfully";
@@ -84,9 +84,9 @@ namespace ECommerce.Web.Areas.Admin.Controllers
                     mUnitOfWork.Product.Update(productVM.Product);
                     TempData["success"] = "Product updated successfully";
                 }
-                
+
                 mUnitOfWork.Save();
-                
+
                 return RedirectToAction("Index", "Product");
             }
             else
@@ -98,7 +98,7 @@ namespace ECommerce.Web.Areas.Admin.Controllers
                 });
                 return View(productVM);
             }
-            
+
         }
 
         #region  API Calls
