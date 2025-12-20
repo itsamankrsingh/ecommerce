@@ -1,24 +1,32 @@
 using ECommerce.DataAccess.Data;
 using ECommerce.DataAccess.Interface;
 using ECommerce.DataAccess.Repository;
-using Microsoft.EntityFrameworkCore;
+using ECommerce.Identity.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddRazorPages();
 
 // Connection string for PostgreSQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                      ?? "Host=localhost;Port=5432;Database=testdb;Username=postgres;Password=yourpassword";
+
+var identityConnString = builder.Configuration.GetConnectionString("IdentityDbConnection")
                       ?? "Host=localhost;Port=5432;Database=testdb;Username=postgres;Password=yourpassword";
 
 // Register ApplicationDbContext with Npgsql provider
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddDbContext<IdentityAppDbContext>(options =>
+    options.UseNpgsql(identityConnString));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<IdentityAppDbContext>();
 
 var app = builder.Build();
 
@@ -36,7 +44,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");

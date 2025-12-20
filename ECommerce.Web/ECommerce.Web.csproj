@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ECommerce.DataAccess\ECommerce.DataAccess.csproj" />
+    <ProjectReference Include="..\ECommerce.Identity\ECommerce.Identity.csproj" />
     <ProjectReference Include="..\ECommerce.Models\ECommerce.Models.csproj" />
   </ItemGroup>
 
