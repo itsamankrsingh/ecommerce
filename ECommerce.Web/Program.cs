@@ -1,8 +1,10 @@
 using ECommerce.DataAccess.Data;
 using ECommerce.DataAccess.Interface;
 using ECommerce.DataAccess.Repository;
+using ECommerce.Identity.Common;
 using ECommerce.Identity.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +28,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDbContext<IdentityAppDbContext>(options =>
     options.UseNpgsql(identityConnString));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<IdentityAppDbContext>();
+builder.Services.AddIdentity<IdentityUser,IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<IdentityAppDbContext>().AddDefaultTokenProviders();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+builder.Services.ConfigureApplicationCookie(opt =>
+{
+    opt.LoginPath = $"/Identity/Account/Login";
+    opt.LogoutPath = $"/Identity/Account/Logout";
+    opt.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+});
 
 var app = builder.Build();
 
