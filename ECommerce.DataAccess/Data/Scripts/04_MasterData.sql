@@ -81,3 +81,54 @@ VALUES
     900.00
 );
 
+INSERT INTO master.tb_companies
+(name, address, city, state, postalcode, phonenumber)
+VALUES
+(
+    'Tata Consultancy Services',
+    'TCS House, Raveline Street, Fort',
+    'Mumbai',
+    'Maharashtra',
+    '400001',
+    '+91-22-67789999'
+),
+(
+    'Infosys Limited',
+    'Electronics City Phase 1',
+    'Bengaluru',
+    'Karnataka',
+    '560100',
+    '+91-80-28520261'
+),
+(
+    'Wipro Technologies',
+    'Sarjapur Road',
+    'Bengaluru',
+    'Karnataka',
+    '560035',
+    '+91-80-46880000'
+),
+(
+    'Reliance Industries Ltd',
+    'Maker Chambers IV, Nariman Point',
+    'Mumbai',
+    'Maharashtra',
+    '400021',
+    '+91-22-35555000'
+),
+(
+    'HDFC Bank Ltd',
+    'HDFC Bank House, Senapati Bapat Marg',
+    'Mumbai',
+    'Maharashtra',
+    '400013',
+    '+91-22-39760000'
+),
+(
+    'ICICI Bank Ltd',
+    'ICICI Bank Towers, Bandra Kurla Complex',
+    'Mumbai',
+    'Maharashtra',
+    '400051',
+    '+91-22-26531414'
+);

@@ -8,11 +8,13 @@ namespace ECommerce.DataAccess.Repository
         private ApplicationDbContext mAppDb;
         public ICategoryRepository Category { get; private set; }
         public IProductRepository Product { get; private set; }
+        public ICompanyRepository Company { get; private set; }
         public UnitOfWork(ApplicationDbContext appDb)
         {
             mAppDb = appDb;
             Category = new CategoryRepository(mAppDb);
             Product = new ProductRepository(mAppDb);
+            Company = new CompanyRepository(mAppDb);
         }
 
         public void Save()

@@ -15,6 +15,7 @@ namespace ECommerce.DataAccess.Data
         // This will map to public.category because of the [Table] attribute
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Company> Companies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -110,6 +111,45 @@ namespace ECommerce.DataAccess.Data
 
                 entity.Property(e => e.ImageUrl)
                      .HasColumnName("image_url");
+            });
+            #endregion
+
+            #region master.tb_companies
+            modelBuilder.Entity<Company>(entity =>
+            {
+                // Map to exact table name and schema:
+                entity.ToTable("tb_companies", "master");
+
+                // If you did NOT use [Table], you can specify here:
+
+                entity.HasKey(e => e.Id);
+
+                // For Postgres identity/serial
+                entity.Property(e => e.Id)
+                      .HasColumnName("id")
+                      .UseIdentityByDefaultColumn();
+
+                entity.Property(e => e.Name)
+                      .HasColumnName("name")
+                      .IsRequired();
+
+                entity.Property(e => e.Address)
+                      .HasColumnName("address");
+
+                entity.Property(e => e.City)
+                      .HasColumnName("city")
+                      .IsRequired();
+
+                entity.Property(e => e.State)
+                      .HasColumnName("state");
+
+                entity.Property(e => e.PostalCode)
+                      .HasColumnName("postalcode")
+                      .IsRequired();
+
+                entity.Property(e => e.PhoneNumber)
+                     .HasColumnName("phonenumber")
+                     .IsRequired();
             });
             #endregion
         }
