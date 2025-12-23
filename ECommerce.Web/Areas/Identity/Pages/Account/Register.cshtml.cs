@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using ECommerce.DataAccess.Interface;
 using ECommerce.Identity.Common;
 using ECommerce.Identity.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -34,6 +35,7 @@ namespace ECommerce.Web.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         public readonly RoleManager<IdentityRole> _roleManager;
+        public readonly IUnitOfWork _unitOfWork;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -41,7 +43,8 @@ namespace ECommerce.Web.Areas.Identity.Pages.Account
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -50,6 +53,7 @@ namespace ECommerce.Web.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _roleManager = roleManager;
+            _unitOfWork = unitOfWork;
         }
 
         /// <summary>
@@ -116,6 +120,9 @@ namespace ECommerce.Web.Areas.Identity.Pages.Account
             public string? State { get; set; }
             public string? City { get; set; }
             public string? PostalCode { get; set; }
+            public int? CompanyId { get; set; }
+            [ValidateNever]
+            public IEnumerable<SelectListItem> CompaniesList { get; set; }
         }
 
 
@@ -133,6 +140,11 @@ namespace ECommerce.Web.Areas.Identity.Pages.Account
                 RoleList = _roleManager.Roles.Select(r => r.Name).Select(i => new SelectListItem
                 {
                     Text = i, Value = i 
+                }),
+                CompaniesList = _unitOfWork.Company.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
                 })
             };
             ReturnUrl = returnUrl;
@@ -156,6 +168,11 @@ namespace ECommerce.Web.Areas.Identity.Pages.Account
                 user.City = Input.City;
                 user.State = Input.State;
                 user.PostalCode = Input.PostalCode;
+
+                if(Input.Role== IdentityRoles.Role_Company)
+                {
+                    user.CompanyId = Input.CompanyId;
+                }
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
