@@ -3,6 +3,8 @@ using ECommerce.DataAccess.Interface;
 using ECommerce.DataAccess.Repository;
 using ECommerce.Identity.Common;
 using ECommerce.Identity.Data;
+using ECommerce.Identity.Interface;
+using ECommerce.Identity.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
 builder.Services.AddRazorPages();
 
 // Connection string for PostgreSQL

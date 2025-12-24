@@ -47,3 +47,7 @@ CREATE TABLE IF NOT EXISTS master.Tb_Companies
     postalcode TEXT,
     phonenumber TEXT
 );
+
+
+ALTER TABLE master.tb_products
+ADD CONSTRAINT pk_tb_products PRIMARY KEY (id);

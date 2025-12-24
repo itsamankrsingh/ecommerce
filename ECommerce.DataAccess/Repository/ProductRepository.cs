@@ -1,6 +1,7 @@
 ﻿using ECommerce.DataAccess.Data;
 using ECommerce.DataAccess.Interface;
 using ECommerce.Models;
+using ECommerce.Utility.DataAccess.Implementation;
 
 namespace ECommerce.DataAccess.Repository
 {

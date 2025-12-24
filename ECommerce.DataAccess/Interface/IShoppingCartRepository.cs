@@ -3,8 +3,8 @@ using ECommerce.Utility.DataAccess.Interface;
 
 namespace ECommerce.DataAccess.Interface
 {
-    public interface ICategoryRepository : IRepository<Category>
+    public interface IShoppingCartRepository : IRepository<ShoppingCart>
     {
-        public void Update(Category obj);
+        public void Update(ShoppingCart obj);
     }
 }

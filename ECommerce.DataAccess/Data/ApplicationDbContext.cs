@@ -16,6 +16,7 @@ namespace ECommerce.DataAccess.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -150,6 +151,43 @@ namespace ECommerce.DataAccess.Data
                 entity.Property(e => e.PhoneNumber)
                      .HasColumnName("phonenumber")
                      .IsRequired();
+            });
+            #endregion
+
+            #region master.tb_shoppingcart
+            modelBuilder.Entity<ShoppingCart>(entity =>
+            {
+                // Map to exact table name and schema:
+                entity.ToTable("tb_shoppingcart", "master");
+
+                // If you did NOT use [Table], you can specify here:
+
+                entity.HasKey(e => e.Id);
+
+                // For Postgres identity/serial
+                entity.Property(e => e.Id)
+                      .HasColumnName("id")
+                      .UseIdentityByDefaultColumn();
+
+                entity.Property(e => e.Count)
+                      .HasColumnName("product_count");
+
+                entity.Property(e => e.ApplicationUserId)
+                      .HasColumnName("application_user_id")
+                      .IsRequired();
+
+                //Foregin key
+                entity.Property(e => e.ProductId)
+              .HasColumnName("product_id")
+              .IsRequired();
+
+                // Correct FOREIGN KEY mapping
+                entity.HasOne(e => e.Product)
+                      .WithMany(p => p.ShoppingCarts)
+                      .HasForeignKey(e => e.ProductId)
+                      .HasConstraintName("fk_tb_shoppingcart_tb_products")
+                      .OnDelete(DeleteBehavior.Restrict);
+
             });
             #endregion
         }

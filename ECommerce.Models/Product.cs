@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ECommerce.Models
 {
@@ -36,5 +37,9 @@ namespace ECommerce.Models
         public Category Category { get; set; } // Navigation property
         [Display(Name = "Image Url")]
         public string? ImageUrl { get; set; }
+        // Navigation property
+        [JsonIgnore]
+        [ValidateNever]
+        public ICollection<ShoppingCart> ShoppingCarts { get; set; }
     }
 }

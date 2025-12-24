@@ -5,17 +5,17 @@ using ECommerce.Utility.DataAccess.Implementation;
 
 namespace ECommerce.DataAccess.Repository
 {
-    public class CompanyRepository : Repository<Company>, ICompanyRepository
+    public class ShoppingCartRepository : Repository<ShoppingCart>, IShoppingCartRepository
     {
         private readonly ApplicationDbContext mAppDb;
-        public CompanyRepository(ApplicationDbContext appDb) : base(appDb)
+        public ShoppingCartRepository(ApplicationDbContext appDb) : base(appDb)
         {
             mAppDb = appDb;
         }
 
-        void ICompanyRepository.Update(Company obj)
+        void IShoppingCartRepository.Update(ShoppingCart obj)
         {
-            mAppDb.Companies.Update(obj);
+            mAppDb.ShoppingCarts.Update(obj);
         }
     }
 }
