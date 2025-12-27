@@ -21,7 +21,7 @@ namespace ECommerce.Web.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            List<Product> products = mUnitOfWork.Product.GetAll("Category").ToList();
+            List<Product> products = mUnitOfWork.Product.GetAll(null,"Category").ToList();
             return View(products);
         }
         public IActionResult Upsert(int? id)
@@ -108,7 +108,7 @@ namespace ECommerce.Web.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var productList = mUnitOfWork.Product.GetAll("Category");
+            var productList = mUnitOfWork.Product.GetAll(null,"Category");
             return Json(new { data = productList });
         }
 

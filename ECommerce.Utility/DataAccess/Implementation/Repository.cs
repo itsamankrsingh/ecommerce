@@ -19,9 +19,17 @@ namespace ECommerce.Utility.DataAccess.Implementation
             mAppDb.Add(entity);
         }
 
-        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
         {
-            IQueryable<T> query = mDbSet;
+            IQueryable<T> query;
+            if (tracked)
+            {
+                query = mDbSet;
+            }
+            else
+            {
+                query = mDbSet.AsNoTracking();
+            }
             query = query.Where(filter);
             if (!string.IsNullOrEmpty(includeProperties))
             {
@@ -33,9 +41,23 @@ namespace ECommerce.Utility.DataAccess.Implementation
             return query.FirstOrDefault();
         }
 
-        public IEnumerable<T> GetAll(string? includeProperties = null)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter, string? includeProperties = null, bool tracked = false)
         {
-            IQueryable<T> query = mDbSet;
+            IQueryable<T> query;
+            if (tracked)
+            {
+                query = mDbSet;
+            }
+            else
+            {
+                query = mDbSet.AsNoTracking();
+
+            }
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
             if (!string.IsNullOrEmpty(includeProperties))
             {
                 foreach (var prop in includeProperties.Split([','], StringSplitOptions.RemoveEmptyEntries))

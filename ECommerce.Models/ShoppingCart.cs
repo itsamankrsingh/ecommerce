@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ECommerce.Models
 {
@@ -13,6 +14,8 @@ namespace ECommerce.Models
         [Range(1, 1000, ErrorMessage = "Please select a valid quantity (1-1000).")]
         public int Count { get; set; }
         public string ApplicationUserId { get; set; }
-        
+        [NotMapped]
+        public double Price { get; set; }
+
     }
 }

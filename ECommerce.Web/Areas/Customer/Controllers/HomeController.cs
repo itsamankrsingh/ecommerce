@@ -20,7 +20,7 @@ namespace ECommerce.Web.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
-            List<Product> products = mUnitOfWork.Product.GetAll("Category").ToList();
+            List<Product> products = mUnitOfWork.Product.GetAll(null,"Category").ToList();
             return View(products);
         }
 
@@ -42,11 +42,21 @@ namespace ECommerce.Web.Areas.Customer.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
             shoppingCart.ApplicationUserId = userId;
 
-            mUnitOfWork.ShoppingCart.Add(shoppingCart);
+            ShoppingCart cartFromDb = mUnitOfWork.ShoppingCart.Get(c=>c.ApplicationUserId==userId &&c.ProductId==shoppingCart.ProductId);
+
+            if (cartFromDb != null)
+            {
+                cartFromDb.Count += shoppingCart.Count;
+                mUnitOfWork.ShoppingCart.Update(cartFromDb);
+            }
+            else
+            {
+                mUnitOfWork.ShoppingCart.Add(shoppingCart);
+            }
             mUnitOfWork.Save();
+            TempData["success"] = "Cart updated successfully";
             return RedirectToAction(nameof(Index));
         }
 
