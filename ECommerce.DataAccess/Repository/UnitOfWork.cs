@@ -10,6 +10,8 @@ namespace ECommerce.DataAccess.Repository
         public IProductRepository Product { get; private set; }
         public ICompanyRepository Company { get; private set; }
         public IShoppingCartRepository ShoppingCart { get; private set; }
+        public IOrderDetailRepository OrderDetail { get; private set; }
+        public IOrderHeaderRepository OrderHeader { get; private set; }
         public UnitOfWork(ApplicationDbContext appDb)
         {
             mAppDb = appDb;
@@ -17,6 +19,8 @@ namespace ECommerce.DataAccess.Repository
             Product = new ProductRepository(mAppDb);
             Company = new CompanyRepository(mAppDb);
             ShoppingCart = new ShoppingCartRepository(mAppDb);
+            OrderDetail = new OrderDetailRepository(mAppDb);
+            OrderHeader = new OrderHeaderRepository(mAppDb);
         }
 
         public void Save()

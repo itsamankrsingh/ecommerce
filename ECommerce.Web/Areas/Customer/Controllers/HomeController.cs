@@ -1,9 +1,9 @@
 using ECommerce.DataAccess.Interface;
 using ECommerce.Models;
+using ECommerce.Utility.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.Security.Claims;
 
 namespace ECommerce.Web.Areas.Customer.Controllers
 {
@@ -40,8 +40,7 @@ namespace ECommerce.Web.Areas.Customer.Controllers
         [Authorize]
         public IActionResult Details(ShoppingCart shoppingCart)
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userId = CommonHelper.GetUserId(User);
             shoppingCart.ApplicationUserId = userId;
 
             ShoppingCart cartFromDb = mUnitOfWork.ShoppingCart.Get(c=>c.ApplicationUserId==userId &&c.ProductId==shoppingCart.ProductId);

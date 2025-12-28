@@ -1,9 +1,5 @@
 ﻿using ECommerce.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace ECommerce.Utility.Helper
 {
@@ -25,12 +21,17 @@ namespace ECommerce.Utility.Helper
             }
         }
 
-        public static double CalculateCartTotal(ShoppingCart shoppingCart, double currentTotal)
+        public static double CalculateCartTotal(ShoppingCart shoppingCart)
         {
-
             shoppingCart.Price = GetPriceBasedOnQuantity(shoppingCart);
-            currentTotal += (shoppingCart.Price * shoppingCart.Count);
-            return currentTotal;
+            return (shoppingCart.Price * shoppingCart.Count);
+        }
+
+        public static string? GetUserId(ClaimsPrincipal User)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            return userId;
         }
     }
 }

@@ -41,5 +41,8 @@ namespace ECommerce.Models
         [JsonIgnore]
         [ValidateNever]
         public ICollection<ShoppingCart> ShoppingCarts { get; set; }
+        [JsonIgnore]
+        [ValidateNever]
+        public ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }

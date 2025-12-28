@@ -1,11 +1,9 @@
 ﻿using ECommerce.DataAccess.Interface;
-using ECommerce.DataAccess.Repository;
-using ECommerce.Models;
+using ECommerce.Identity.Interface;
 using ECommerce.Utility.Helper;
 using ECommerce.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace ECommerce.Web.Areas.Customer.Controllers
 {
@@ -15,22 +13,24 @@ namespace ECommerce.Web.Areas.Customer.Controllers
     {
         public CartViewModel mCartViewModel;
         private readonly IUnitOfWork mUnitOfWork;
-        public CartController(IUnitOfWork unitOfWork)
+        private readonly IApplicationUserRepository mAppUserRepository;
+        public CartController(IUnitOfWork unitOfWork, IApplicationUserRepository appUserRepository)
         {
             mUnitOfWork = unitOfWork;
+            mAppUserRepository = appUserRepository;
         }
         public IActionResult Index()
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userId = CommonHelper.GetUserId(User);
             mCartViewModel = new CartViewModel()
             {
                 ShoppingCarts = mUnitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == userId, "Product").OrderBy(u => u.ProductId),
+                OrderHeader = new()
             };
-            mCartViewModel.OrderTotal = 0;
+            mCartViewModel.OrderHeader.OrderTotal = 0;
             foreach (var cartItem in mCartViewModel.ShoppingCarts)
             {
-                mCartViewModel.OrderTotal += CommonHelper.CalculateCartTotal(cartItem, mCartViewModel.OrderTotal);
+                mCartViewModel.OrderHeader.OrderTotal += CommonHelper.CalculateCartTotal(cartItem);
             }
 
             return View(mCartViewModel);
@@ -61,6 +61,32 @@ namespace ECommerce.Web.Areas.Customer.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public IActionResult Summary(int cartId)
+        {
+            var userId = CommonHelper.GetUserId(User);
+            mCartViewModel = new CartViewModel()
+            {
+                ShoppingCarts = mUnitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == userId, "Product").OrderBy(u => u.ProductId),
+                OrderHeader = new()
+            };
+            mCartViewModel.OrderHeader.OrderTotal = 0;
+            foreach (var cartItem in mCartViewModel.ShoppingCarts)
+            {
+                mCartViewModel.OrderHeader.OrderTotal += CommonHelper.CalculateCartTotal(cartItem);
+            }
+            var applicationUser = mAppUserRepository.Get(u => u.Id == userId);
+
+            mCartViewModel.OrderHeader.Name = applicationUser.Name;
+            mCartViewModel.OrderHeader.PhoneNumber = applicationUser.PhoneNumber;
+            mCartViewModel.OrderHeader.Address = applicationUser.Address;
+            mCartViewModel.OrderHeader.City = applicationUser.City;
+            mCartViewModel.OrderHeader.State = applicationUser.State;
+            mCartViewModel.OrderHeader.PostalCode = applicationUser.PostalCode;
+
+            return View(mCartViewModel);
+        }
+
+        #region API Calls
         [HttpPost]
         public IActionResult Remove(int cartId)
         {
@@ -76,25 +102,17 @@ namespace ECommerce.Web.Areas.Customer.Controllers
             mUnitOfWork.Save();
 
             // Recalculate total
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userId = CommonHelper.GetUserId(User);
 
             var shoppingCarts = mUnitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == userId, "Product").OrderBy(u => u.ProductId);
-            double newTotal = 0; 
+            double newTotal = 0;
             foreach (var cartItem in shoppingCarts)
             {
-                newTotal += CommonHelper.CalculateCartTotal(cartItem, newTotal);
+                newTotal += CommonHelper.CalculateCartTotal(cartItem);
             }
 
             return Json(new { success = true, total = newTotal });
         }
-
-        public IActionResult Summary(int cartId)
-        {
-            return View();
-        }
-
-        #region API Calls
         #endregion
     }
 }
