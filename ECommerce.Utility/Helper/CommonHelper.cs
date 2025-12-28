@@ -11,11 +11,11 @@ namespace ECommerce.Utility.Helper
     {
         public static double GetPriceBasedOnQuantity(ShoppingCart shoppingCart)
         {
-            if(shoppingCart.Count <= 50)
+            if (shoppingCart.Count <= 50)
             {
                 return shoppingCart.Product.Price;
             }
-            else if(shoppingCart.Count <= 100)
+            else if (shoppingCart.Count <= 100)
             {
                 return shoppingCart.Product.Price50;
             }
@@ -23,6 +23,14 @@ namespace ECommerce.Utility.Helper
             {
                 return shoppingCart.Product.Price100;
             }
+        }
+
+        public static double CalculateCartTotal(ShoppingCart shoppingCart, double currentTotal)
+        {
+
+            shoppingCart.Price = GetPriceBasedOnQuantity(shoppingCart);
+            currentTotal += (shoppingCart.Price * shoppingCart.Count);
+            return currentTotal;
         }
     }
 }

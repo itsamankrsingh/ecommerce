@@ -13,13 +13,21 @@
             debugger;
             $.ajax({
                 url: '/Customer/Cart/Remove',
-                type: 'POST', // better than GET for delete
+                type: 'POST',
                 data: { cartId: cartId },
                 success: function (data) {
+                    $("#cartRow_" + cartId).fadeOut(300, function () {
+                        $(this).remove();
+                    });
+
+                    const formattedTotal = data.total.toLocaleString("en-IN", {
+                        style: "currency",
+                        currency: "INR"
+                    });
+
+                    $("#orderTotal").text(formattedTotal);
+
                     toastr.success("Item removed from cart");
-                    setTimeout(function () {
-                        location.reload();
-                    }, 1000); // 1 second delay
                 },
                 error: function () {
                     toastr.error("Something went wrong");

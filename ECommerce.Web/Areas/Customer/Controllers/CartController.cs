@@ -1,4 +1,5 @@
 ﻿using ECommerce.DataAccess.Interface;
+using ECommerce.DataAccess.Repository;
 using ECommerce.Models;
 using ECommerce.Utility.Helper;
 using ECommerce.Web.ViewModels;
@@ -26,11 +27,10 @@ namespace ECommerce.Web.Areas.Customer.Controllers
             {
                 ShoppingCarts = mUnitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == userId, "Product").OrderBy(u => u.ProductId),
             };
-
+            mCartViewModel.OrderTotal = 0;
             foreach (var cartItem in mCartViewModel.ShoppingCarts)
             {
-                cartItem.Price = CommonHelper.GetPriceBasedOnQuantity(cartItem);
-                mCartViewModel.OrderTotal += (cartItem.Price * cartItem.Count);
+                mCartViewModel.OrderTotal += CommonHelper.CalculateCartTotal(cartItem, mCartViewModel.OrderTotal);
             }
 
             return View(mCartViewModel);
@@ -74,7 +74,19 @@ namespace ECommerce.Web.Areas.Customer.Controllers
             mUnitOfWork.ShoppingCart.Remove(cartFromDb);
 
             mUnitOfWork.Save();
-            return Json(new { success = true, message = "Item removed successfully" });
+
+            // Recalculate total
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var shoppingCarts = mUnitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == userId, "Product").OrderBy(u => u.ProductId);
+            double newTotal = 0; 
+            foreach (var cartItem in shoppingCarts)
+            {
+                newTotal += CommonHelper.CalculateCartTotal(cartItem, newTotal);
+            }
+
+            return Json(new { success = true, total = newTotal });
         }
 
         public IActionResult Summary(int cartId)
